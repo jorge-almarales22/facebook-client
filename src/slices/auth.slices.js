@@ -5,14 +5,16 @@ export const authSlice = createSlice({
     initialState: {
         token: null,
         email: null,
-        name: null
+        name: null,
+        id: null
     },
     reducers: {
         sigin: (state, { payload } ) => {
-            const { token, email, name } = payload
+            const { token, email, name, id } = payload
             state.token = token
             state.email = email
             state.name = name
+            state.id = id
         },
     }
 });

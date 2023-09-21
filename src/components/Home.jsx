@@ -49,7 +49,7 @@ export const Home = ({redirect, isAllowed}) => {
       const formData = new FormData();
       formData.append('image', file);
       formData.append('content', content);
-      formData.append('user_id', 1);
+      formData.append('user_id', user.id);
 
 
       const resp = await fetch('http://localhost:8000/api/posts/store', {
