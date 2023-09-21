@@ -21,8 +21,8 @@ export const Home = ({redirect, isAllowed}) => {
         console.log('Conectado al servidor de Socket.IO');
       });
 
-      socket.on('disconnect', () => {
-        console.log('Desconectado del servidor de Socket.IO');
+      socket.on('uploaded_post', (payload) => {
+        console.log('Post subido', payload);
       });
       
       return () => {
@@ -44,7 +44,7 @@ export const Home = ({redirect, isAllowed}) => {
       const content = refContentPost.current.value
 
       // Event emitting to save post
-      socket.emit('upload_post', 'eh subido un post!');
+      socket.emit('upload_post', `The user ${user.name} uploaded a post`);
 
       const formData = new FormData();
       formData.append('image', file);
