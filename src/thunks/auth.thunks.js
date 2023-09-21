@@ -13,10 +13,16 @@ export const signinThunk = (email, password) => {
             })
         })
         const data = await resp.json()
-        
-        dispatch(sigin(data))
 
-        localStorage.setItem('authUser', JSON.stringify(data))
+        if(data.success){
+            
+            dispatch(sigin(data))
+    
+            localStorage.setItem('authUser', JSON.stringify(data))
+        }else{
+            document.getElementById('emailHelp').classList.remove('d-none')
+        }
+        
         
     }
 }

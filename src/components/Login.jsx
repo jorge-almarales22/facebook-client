@@ -16,8 +16,6 @@ export const Login = ({redirect, isAllowed}) => {
         const email = refEmail.current.value
         const password = refPassword.current.value
         
-        console.log(email, password)
-        
         if(!email || !password) {
             errorRef.current.classList.remove("d-none")
             return

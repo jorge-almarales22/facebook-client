@@ -20,8 +20,6 @@ export const App = () => {
     const auth = useSelector(state => state.auth.token)   
     const dispatch = useDispatch()
 
-    console.log(auth)
-
    return (
       <div className="container">
         <Navbar/>
