@@ -21,19 +21,20 @@ export const Home = ({ redirect, isAllowed }) => {
 
   const refInputFile = useRef();
 
-  
-  let socket = null
+  // use effect para conectarme con el socket server
   useEffect(() => {
-    socket = socketIOClient('http://localhost:8000'); // La URL debe apuntar a tu servidor
-
+    const socket = socketIOClient('http://localhost:8000'); // La URL debe apuntar a tu servidor
+    //Verificando conexion con el socket server
     socket.on('connect', () => {
       console.log('Conectado al servidor de Socket.IO');
     });
 
+    //escuchando evento cuando se sube un post
     socket.on('uploaded_post', (payload) => {
       console.log('Post subido', payload);
     });
 
+    //Obtener todos los posts cuando tengamos el usuario auth
     if (user.id) {
       dispatch(getAllPostsThunk(user.id))
     }
@@ -43,22 +44,18 @@ export const Home = ({ redirect, isAllowed }) => {
     };
   }, []);
 
-  useEffect(() => {
-    if(user.id){
-      dispatch(getAllPostsThunk(user.id)); 
-    }
-  }, [dispatch]);
-
+  // Funcion para subir el archivo
   const handleFileUpload = (e) => {
     const selectedFile = e.target.files[0];
     setFile(selectedFile);
   }
 
-
+  // Funcion para subir el post
   const handleSubmitPost = async (e) => {
 
     e.preventDefault()
 
+    // Conectando con el socket server
     let socket = socketIOClient('http://localhost:8000');
 
     const content = refContentPost.current.value
@@ -71,7 +68,7 @@ export const Home = ({ redirect, isAllowed }) => {
     formData.append('content', content);
     formData.append('user_id', user.id);
 
-
+    // Subiendo el post
     const resp = await fetch('http://localhost:8000/api/posts/store', {
       method: 'POST',
       body: formData
@@ -79,6 +76,7 @@ export const Home = ({ redirect, isAllowed }) => {
 
     const data = await resp.json();
 
+    //si se guarda el posts traemos todos los posts de nuevo y asignamos al store global de posts
     if (data.success) {
       dispatch(getAllPostsThunk(user.id))
       clearForm();
@@ -91,6 +89,8 @@ export const Home = ({ redirect, isAllowed }) => {
 
   }
 
+
+  // Funcion para limpiar el formulario
   const clearForm = () => {
     refContentPost.current.value = '';
     setFile(null);
