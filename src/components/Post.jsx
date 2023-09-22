@@ -1,7 +1,8 @@
 import { useRef } from "react";
+import "../css/styles.css";
 
-export const Post = () => {
-
+export const Post = ({post}) => {
+    const {name, createAt, content, image} = post;
     const refLike = useRef();
     const refIconLiked = useRef();
     const refIconNotLike = useRef();
@@ -26,14 +27,16 @@ export const Post = () => {
 
     return (
         <>
-            <div className="card">
+            <div className="card my-5">
                 <div className="card-header d-flex justify-content-between align-items-center">
-                    <span>Name user</span>
-                    <span>Date</span>
+                    <span className="fw-bold">{name}</span>
+                    <span>{createAt}</span>
                 </div>
 
                 <div className="card-body">
-                    Lorem ipsum, dolor sit amet consectetur adipisicing elit. Impedit ducimus itaque eius ipsam praesentium dolorem fugiat, sunt incidunt nulla, unde sint doloribus placeat voluptatum quidem, expedita officia. Accusantium, veritatis nulla?
+                    {content}
+
+                    {!image ? '' : <img src={`http://localhost:8000/images/${image}`} alt="" className="w-100 image-post"/>}
                 </div>
 
                 <div className="card-footer d-flex justify-content-around">

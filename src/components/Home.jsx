@@ -7,16 +7,22 @@ import { getAllPostsThunk } from "../thunks/posts.thunks";
 
 export const Home = ({ redirect, isAllowed }) => {
 
-  const [user, setUser] = useState(useSelector((state) => state.auth));
-
   const [file, setFile] = useState(null);
+
+  const user = useSelector((state) => state.auth);
+
+  const posts = useSelector((state) => state.posts.allPosts);
 
   const dispatch = useDispatch();
 
-  let socket = null
-
   const refContentPost = useRef();
 
+  const refAlert = useRef();
+
+  const refInputFile = useRef();
+
+  
+  let socket = null
   useEffect(() => {
     socket = socketIOClient('http://localhost:8000'); // La URL debe apuntar a tu servidor
 
@@ -36,6 +42,12 @@ export const Home = ({ redirect, isAllowed }) => {
       socket.disconnect(); // Desconectar el socket cuando el componente se desmonte
     };
   }, []);
+
+  useEffect(() => {
+    if(user.id){
+      dispatch(getAllPostsThunk(user.id)); 
+    }
+  }, [dispatch]);
 
   const handleFileUpload = (e) => {
     const selectedFile = e.target.files[0];
@@ -69,25 +81,42 @@ export const Home = ({ redirect, isAllowed }) => {
 
     if (data.success) {
       dispatch(getAllPostsThunk(user.id))
+      clearForm();
+      refAlert.current.classList.remove("d-none");
+
+      setTimeout(() => {
+        refAlert.current.classList.add("d-none");
+      }, 5000);
     }
 
+  }
+
+  const clearForm = () => {
+    refContentPost.current.value = '';
+    setFile(null);
+    refInputFile.current.value = '';
   }
 
   if (!isAllowed) return <Navigate to={redirect} />
 
   return (
     <>
+      <div ref={refAlert} className="alert alert-success d-none my-3" role="alert">
+        Post uploaded successfully.
+      </div>
       <div className="card mb-4 mt-3">
         <div method="POST" className="card-header d-flex justify-content-between align-items-center">
           <span>Hey, {user.name}, what's on your mind</span>
         </div>
         <form method="POST" className="card-body" onSubmit={handleSubmitPost}>
           <textarea ref={refContentPost} className="form-control" cols="20" rows="1" placeholder="What's on your mind"></textarea>
-          <input type="file" name="image" className="my-2" onChange={handleFileUpload} />
+          <input ref={refInputFile} type="file" name="image" className="my-2" onChange={handleFileUpload} />
           <button type="submit" className="btn btn-primary my-2 d-block">Post</button>
         </form>
       </div>
-
+      {
+        posts.map((post) => <Post key={post.id} post={post} />)
+      }
     </>
   )
 }
