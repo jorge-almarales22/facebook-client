@@ -25,12 +25,30 @@ export const Post = ({post}) => {
         }
     }
 
+    function timeElapsed(date) {
+        const ahora = new Date();
+        const fechaSubida = new Date(date);
+        const diferencia = ahora - fechaSubida;
+      
+        const segundos = Math.floor(diferencia / 1000);
+        const minutos = Math.floor(segundos / 60);
+        const horas = Math.floor(minutos / 60);
+      
+        if (horas > 0) {
+          return `subido hace ${horas} hora${horas !== 1 ? 's' : ''}`;
+        } else if (minutos > 0) {
+          return `subido hace ${minutos} minuto${minutos !== 1 ? 's' : ''}`;
+        } else {
+          return `subido hace ${segundos} segundo${segundos !== 1 ? 's' : ''}`;
+        }
+      }
+
     return (
         <>
             <div className="card my-5">
                 <div className="card-header d-flex justify-content-between align-items-center">
                     <span className="fw-bold">{name}</span>
-                    <span>{createAt}</span>
+                    <span>{timeElapsed(createAt)}</span>
                 </div>
 
                 <div className="card-body">
