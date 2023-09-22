@@ -29,9 +29,14 @@ export const Home = ({ redirect, isAllowed }) => {
       console.log('Conectado al servidor de Socket.IO');
     });
 
+    if(user.id){
+      socket.emit('update-key', user.id);
+    }
+
     //escuchando evento cuando se sube un post
     socket.on('uploaded_post', (payload) => {
-      console.log('Post subido', payload);
+      console.log(payload);
+      dispatch(getAllPostsThunk(user.id))
     });
 
     //Obtener todos los posts cuando tengamos el usuario auth
@@ -60,9 +65,6 @@ export const Home = ({ redirect, isAllowed }) => {
 
     const content = refContentPost.current.value
 
-    // Event emitting to save post
-    socket.emit('upload_post', `The user ${user.name} uploaded a post`);
-
     const formData = new FormData();
     formData.append('image', file);
     formData.append('content', content);
@@ -78,8 +80,13 @@ export const Home = ({ redirect, isAllowed }) => {
 
     //si se guarda el posts traemos todos los posts de nuevo y asignamos al store global de posts
     if (data.success) {
+
       dispatch(getAllPostsThunk(user.id))
       clearForm();
+
+      // Emitiendo el evento de guardar el post
+      socket.emit('upload_post', user.id);
+
       refAlert.current.classList.remove("d-none");
 
       setTimeout(() => {
