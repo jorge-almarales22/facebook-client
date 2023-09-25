@@ -39,6 +39,13 @@ export const Home = ({ redirect, isAllowed }) => {
       dispatch(getAllPostsThunk(user.id))
     });
 
+    socket.on('notify-request', (payload) => {
+
+      refAlert.current.innerHTML = `You have a new friend request from ${payload.name}`;
+      refAlert.current.classList.remove("d-none");
+      document.querySelector('.notification').classList.add('text-danger', 'fw-bold');
+    })
+
     //Obtener todos los posts cuando tengamos el usuario auth
     if (user.id) {
       dispatch(getAllPostsThunk(user.id))

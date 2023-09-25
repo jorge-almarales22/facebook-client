@@ -8,6 +8,7 @@ import { MyProfile } from "./components/MyProfile"
 import { useDispatch, useSelector } from "react-redux"
 import { useEffect } from "react"
 import { sigin } from "./slices/auth.slices"
+import { Notification } from "./components/Notification"
 
 export const App = () => {
     
@@ -31,6 +32,7 @@ export const App = () => {
             <Route path="/chats" element={<Chats redirect="/" isAllowed={!!auth}/>}/>
             <Route path="/friends" element={<Friends redirect="/" isAllowed={!!auth}/>}/>
             <Route path="/my-profile" element={<MyProfile redirect="/" isAllowed={!!auth}/>}/>
+            <Route path="/notifications" element={<Notification redirect="/" isAllowed={!!auth}/>}/>
         </Routes>
       </div>
    )

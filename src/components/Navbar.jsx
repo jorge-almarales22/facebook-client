@@ -20,6 +20,9 @@ export const Navbar = () => {
                             <li className="nav-item">
                                 <Link className="nav-link" to="/chats">Chats</Link>
                             </li>
+                            <li className="nav-item">
+                                <Link className="nav-link notification" to="/notifications">Notifications</Link>
+                            </li>
                             <li className="nav-item dropdown">
                                 <a className="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                                     Profile
