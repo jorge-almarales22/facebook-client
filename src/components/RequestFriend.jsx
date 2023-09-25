@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react"
+import { useSelector } from "react-redux";
 import socketIOClient from 'socket.io-client';
 
-export const RequestFriend = ({user}) => {
+export const RequestFriend = ({friend, setRequests}) => {
 
     let socket = null;
+
+    const user = useSelector((state) => state.auth);
 
     useEffect(() => {
 
@@ -15,18 +18,24 @@ export const RequestFriend = ({user}) => {
 
     }, []);
 
-    const [request, setRequest] = useState(true)
-
     const handleSendRequest = async() => {
 
-        // const data = {
-        //     user_id: user.id,
-        //     friend_id: friend.id
-        // }
+        socket = socketIOClient('http://localhost:8000');
 
-        // socket.emit('send-request', data);
+        const data = {
+            // usuario authenticado
+            user_id: user.id,
+            // id de la persona que quiere ser tu amigo
+            friend_id: friend.id
+        }
 
-        // setRequest('Cancel Request')
+        socket.emit('accept-request', data, async(payload) => {
+            
+            const resp = await fetch(`http://localhost:8000/api/friends/friend-requests?user_id=${user.id}`)
+            const users = await resp.json()
+            setRequests(users.users)
+        });
+        
 
         console.log("Request Accepted")
     }
@@ -39,7 +48,7 @@ export const RequestFriend = ({user}) => {
     return (
         <div className="card my-2">
             <div className="card-header">
-                <p className="text-muted"><span className="fw-bold">{user.name}</span> has sent you a friend request</p>
+                <p className="text-muted"><span className="fw-bold">{friend.name}</span> has sent you a friend request</p>
             </div>
             <div className="card-body">
                 <button className="btn btn-primary" onClick={handleSendRequest}>Confirm</button>

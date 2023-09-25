@@ -43,7 +43,20 @@ export const Home = ({ redirect, isAllowed }) => {
 
       refAlert.current.innerHTML = `You have a new friend request from ${payload.name}`;
       refAlert.current.classList.remove("d-none");
+      setTimeout(() => {
+        refAlert.current.classList.add("d-none");
+      }, 3000);
       document.querySelector('.notification').classList.add('text-danger', 'fw-bold');
+    })
+    
+    socket.on('accepted-friend-request', (payload) => {
+
+      refAlert.current.innerHTML = `${payload.name} accepted your friend request`;
+      refAlert.current.classList.remove("d-none");
+      document.querySelector('.notification').classList.add('text-danger', 'fw-bold');
+      setTimeout(() => {
+        refAlert.current.classList.add("d-none");
+      }, 3000);
     })
 
     //Obtener todos los posts cuando tengamos el usuario auth

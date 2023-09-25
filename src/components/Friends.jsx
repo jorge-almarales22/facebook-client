@@ -58,7 +58,7 @@ export const Friends = ({redirect, isAllowed}) => {
                )
                :
                (
-                  requests.map(request => <RequestFriend user={request} key={request.id}/>)
+                  requests.map(request => <RequestFriend setRequests={setRequests} friend={request} key={request.id}/>)
                )
             }
          </div>
