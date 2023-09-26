@@ -3,11 +3,14 @@ import { Friend } from "./Friend"
 import { useRef, useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RequestFriend } from "./RequestFriend";
+import { useSockect } from "./useSockect";
+import { Alert } from "./Alert";
 
 export const Friends = ({redirect, isAllowed}) => {
 
    const refSearch = useRef();
-   const user =  useSelector(state => state.auth)
+
+   const {user} = useSockect();
 
    const [friends, setFriends] = useState([])
    const [requests, setRequests] = useState([])
@@ -36,6 +39,8 @@ export const Friends = ({redirect, isAllowed}) => {
    if(!isAllowed) return <Navigate to={redirect} />   
    return (
       <>
+      <Alert/>
+      
       <div className="card my-5">
          <div className="card-header">
             <h2>Friends</h2>

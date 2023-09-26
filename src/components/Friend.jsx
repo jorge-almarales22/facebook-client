@@ -1,19 +1,9 @@
-import { useEffect, useState } from "react"
-import socketIOClient from 'socket.io-client';
+import { useState } from "react"
+import { useSockect } from "./useSockect";
 
 export const Friend = ({friend, user}) => {
 
-    let socket = null;
-
-    useEffect(() => {
-
-        socket = socketIOClient('http://localhost:8000'); 
-
-        return () => {
-            socket.disconnect(); // Desconectar el socket cuando el componente se desmonte
-        };
-
-    }, []);
+    const { socket } = useSockect();
 
     const [request, setRequest] = useState('Friend Request Sent')
 

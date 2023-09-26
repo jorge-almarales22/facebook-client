@@ -1,26 +1,10 @@
-import { useEffect, useState } from "react"
-import { useSelector } from "react-redux";
-import socketIOClient from 'socket.io-client';
+import { useSockect } from "./useSockect";
 
 export const RequestFriend = ({friend, setRequests}) => {
 
-    let socket = null;
-
-    const user = useSelector((state) => state.auth);
-
-    useEffect(() => {
-
-        socket = socketIOClient('http://localhost:8000'); 
-
-        return () => {
-            socket.disconnect(); // Desconectar el socket cuando el componente se desmonte
-        };
-
-    }, []);
+    const { socket, user } = useSockect();
 
     const handleSendRequest = async() => {
-
-        socket = socketIOClient('http://localhost:8000');
 
         const data = {
             // usuario authenticado

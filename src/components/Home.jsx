@@ -1,73 +1,22 @@
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Navigate } from "react-router-dom"
-import socketIOClient from 'socket.io-client';
 import { Post } from "./Post";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { getAllPostsThunk } from "../thunks/posts.thunks";
+import { useSockect } from "./useSockect";
+import { Alert } from "./Alert";
 
 export const Home = ({ redirect, isAllowed }) => {
 
-  const [file, setFile] = useState(null);
+  const { socket, user, dispatch} = useSockect();
 
-  const user = useSelector((state) => state.auth);
+  const [file, setFile] = useState(null);
 
   const posts = useSelector((state) => state.posts.allPosts);
 
-  const dispatch = useDispatch();
-
   const refContentPost = useRef();
 
-  const refAlert = useRef();
-
   const refInputFile = useRef();
-
-  // use effect para conectarme con el socket server
-  useEffect(() => {
-    const socket = socketIOClient('http://localhost:8000'); // La URL debe apuntar a tu servidor
-    //Verificando conexion con el socket server
-    socket.on('connect', () => {
-      console.log('Conectado al servidor de Socket.IO');
-    });
-
-    if(user.id){
-      socket.emit('update-key', user.id);
-    }
-
-    //escuchando evento cuando se sube un post
-    socket.on('uploaded_post', (payload) => {
-      console.log(payload);
-      dispatch(getAllPostsThunk(user.id))
-    });
-
-    socket.on('notify-request', (payload) => {
-
-      refAlert.current.innerHTML = `You have a new friend request from ${payload.name}`;
-      refAlert.current.classList.remove("d-none");
-      setTimeout(() => {
-        refAlert.current.classList.add("d-none");
-      }, 3000);
-      document.querySelector('.notification').classList.add('text-danger', 'fw-bold');
-    })
-    
-    socket.on('accepted-friend-request', (payload) => {
-
-      refAlert.current.innerHTML = `${payload.name} accepted your friend request`;
-      refAlert.current.classList.remove("d-none");
-      document.querySelector('.notification').classList.add('text-danger', 'fw-bold');
-      setTimeout(() => {
-        refAlert.current.classList.add("d-none");
-      }, 3000);
-    })
-
-    //Obtener todos los posts cuando tengamos el usuario auth
-    if (user.id) {
-      dispatch(getAllPostsThunk(user.id))
-    }
-
-    return () => {
-      socket.disconnect(); // Desconectar el socket cuando el componente se desmonte
-    };
-  }, []);
 
   // Funcion para subir el archivo
   const handleFileUpload = (e) => {
@@ -79,9 +28,6 @@ export const Home = ({ redirect, isAllowed }) => {
   const handleSubmitPost = async (e) => {
 
     e.preventDefault()
-
-    // Conectando con el socket server
-    let socket = socketIOClient('http://localhost:8000');
 
     const content = refContentPost.current.value
 
@@ -107,10 +53,10 @@ export const Home = ({ redirect, isAllowed }) => {
       // Emitiendo el evento de guardar el post
       socket.emit('upload_post', user.id);
 
-      refAlert.current.classList.remove("d-none");
+      document.querySelector('.alert').classList.remove("d-none");
 
       setTimeout(() => {
-        refAlert.current.classList.add("d-none");
+        document.querySelector('.alert').classList.add("d-none");
       }, 5000);
     }
 
@@ -128,9 +74,7 @@ export const Home = ({ redirect, isAllowed }) => {
 
   return (
     <>
-      <div ref={refAlert} className="alert alert-success d-none my-3" role="alert">
-        Post uploaded successfully.
-      </div>
+      <Alert/>
       <div className="card mb-4 mt-3">
         <div method="POST" className="card-header d-flex justify-content-between align-items-center">
           <span>Hey, {user.name}, what's on your mind</span>
