@@ -16,6 +16,12 @@ export const Notification = ({redirect, isAllowed}) => {
 
    useEffect(() => {
         getNotifications()
+        try {
+            document.querySelector('.notification').classList.remove('text-danger', 'fw-bold');
+            
+        } catch (error) {
+            console.log(error)
+        }
    }, [])
    if(!isAllowed) return <Navigate to={redirect} />   
    

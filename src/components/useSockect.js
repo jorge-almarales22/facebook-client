@@ -30,23 +30,32 @@ export const useSockect = () => {
         });
     
         socket.on('notify-request', (payload) => {
+
+            try {
+                
+                document.querySelector('.alert').innerHTML = `You have a new friend request from ${payload.name}`;
+                document.querySelector('.alert').classList.remove("d-none");
+                setTimeout(() => {
+                  document.querySelector('.alert').classList.add("d-none");
+                }, 3000);
+                document.querySelector('.notification').classList.add('text-danger', 'fw-bold');
+            } catch (error) {
+                console.log(error)
+            }
     
-          document.querySelector('.alert').innerHTML = `You have a new friend request from ${payload.name}`;
-          document.querySelector('.alert').classList.remove("d-none");
-          setTimeout(() => {
-            document.querySelector('.alert').classList.add("d-none");
-          }, 3000);
-          document.querySelector('.notification').classList.add('text-danger', 'fw-bold');
         })
         
         socket.on('accepted-friend-request', (payload) => {
-    
-          document.querySelector('.alert').innerHTML = `${payload.name} accepted your friend request`;
-          document.querySelector('.alert').classList.remove("d-none");
-          document.querySelector('.notification').classList.add('text-danger', 'fw-bold');
-          setTimeout(() => {
-            document.querySelector('.alert').classList.add("d-none");
-          }, 3000);
+            try {        
+                document.querySelector('.alert').innerHTML = `${payload.name} accepted your friend request`;
+                document.querySelector('.alert').classList.remove("d-none");
+                document.querySelector('.notification').classList.add('text-danger', 'fw-bold');
+                setTimeout(() => {
+                  document.querySelector('.alert').classList.add("d-none");
+                }, 3000);
+            } catch (error) {
+                console.log(error)
+            }
         })
     
         //Obtener todos los posts cuando tengamos el usuario auth
