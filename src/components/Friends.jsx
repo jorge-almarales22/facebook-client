@@ -13,7 +13,14 @@ export const Friends = ({redirect, isAllowed}) => {
    const {user} = useSockect();
 
    const [friends, setFriends] = useState([])
+   const [foundFriends, setFoundFriends] = useState([])
    const [requests, setRequests] = useState([])
+
+   const getFriends = async() => {
+      const resp = await fetch(`http://localhost:8000/api/friends?user_id=${user.id}`)
+      const data = await resp.json()
+      setFriends(data.users)
+   }
 
    const getFriendRequests = async() => {
       const resp = await fetch(`http://localhost:8000/api/friends/friend-requests?user_id=${user.id}`)
@@ -24,6 +31,7 @@ export const Friends = ({redirect, isAllowed}) => {
    useEffect(() => {
       if(user.id !== undefined) {
          getFriendRequests()
+         getFriends()
       }
    }, []);
 
@@ -33,20 +41,29 @@ export const Friends = ({redirect, isAllowed}) => {
       
       const resp = await fetch(`http://localhost:8000/api/friends/search?username=${search}&user_id=${user.id}`)
       const data = await resp.json()
-      setFriends(data.users)
+      setFoundFriends(data.users)
    }
 
    if(!isAllowed) return <Navigate to={redirect} />   
    return (
       <>
       <Alert/>
-      
+
       <div className="card my-5">
          <div className="card-header">
-            <h2>Friends</h2>
+            <h2>Your Friends</h2>
          </div>
          <div className="card-body">
-            <Friend user={user} friend={{}} />
+            {
+               friends.length === 0 ?
+               (
+                  <p className="text-muted">No friends</p>
+               )
+               :
+               (
+                  friends.map(friend => <Friend weAreFriends={true} user={user} friend={friend} key={friend.id}/>)
+               )
+            }
          </div>
       </div>
       <hr />
@@ -75,10 +92,12 @@ export const Friends = ({redirect, isAllowed}) => {
             <h2>Search Friends</h2>
          </div>
          <div className="card-body">
-            <input type="text" className="form-control" ref={refSearch}/>
-            <button className="btn btn-success my-2" onClick={handleSearchFriend}>Search</button>
+            <div className="d-flex align-items-center justify-content-between">
+               <input type="text" className="form-control" ref={refSearch}/>
+               <button className="btn btn-success my-2" onClick={handleSearchFriend}>Search</button>
+            </div>
             <hr />
-            {friends.map(friend => <Friend user={user} key={friend.id} friend={friend}/>)}
+            {foundFriends.map(friend => <Friend weAreFriends={false} user={user} key={friend.id} friend={friend}/>)}
          </div>
       </div>
         

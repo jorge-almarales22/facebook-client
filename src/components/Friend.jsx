@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useSockect } from "./useSockect";
 
-export const Friend = ({friend, user}) => {
+export const Friend = ({friend, user, weAreFriends}) => {
 
     const { socket } = useSockect();
 
@@ -28,14 +28,25 @@ export const Friend = ({friend, user}) => {
                 {friend.name}
             </div>
             <div className="card-body">
-                {
-                    request == 'Friend Request Sent' ? (
+                { 
+                    !weAreFriends && (
 
-                        <button className="btn btn-success" onClick={handleSendRequest}>Send Request</button>
-                    ) : 
-                    (
-                        <button className="btn btn-danger" onClick={handleCancelRequest}>Cancel Request</button>
-                    ) 
+                        request == 'Friend Request Sent' ? (
+
+                            <button className="btn btn-success" onClick={handleSendRequest}>Send Request</button>
+                        ) : 
+                        (
+                            <button className="btn btn-danger" onClick={handleCancelRequest}>Cancel Request</button>
+                        ) 
+                    )
+                }
+                { 
+                    weAreFriends && (
+                        <>
+                            <button className="btn btn-primary btn-sm" >Send a message</button>
+                            <button className="btn btn-danger mx-2 btn-sm" >Delete Friend</button>
+                        </>
+                    )
                 }
             </div>
         </div>
